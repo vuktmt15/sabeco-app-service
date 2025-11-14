@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 
 app.get("/", async (req, res) => {
     await connectToDb();
-    res.send("Hello from Azure App Service!");
+    res.send("Hello from Azure App Service!!");
 });
 
 app.listen(port, () => {
