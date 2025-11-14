@@ -15,12 +15,23 @@ async function connectToDb() {
     try {
         await sql.connect(config);
         console.log("Connected to Azure SQL Managed Instance");
-        // Thực hiện truy vấn ở đây
-        const result = await sql.query("SELECT TOP 10 * FROM sys.tables");
-        console.log(result);
+        return true;
     } catch (err) {
         console.error("Database connection failed:", err);
+        return false;
     }
 }
 
-connectToDb();
+async function getTables() {
+    try {
+        const result = await sql.query(
+            "SELECT name FROM sys.tables ORDER BY name"
+        );
+        return result.recordset;
+    } catch (err) {
+        console.error("Error getting tables:", err);
+        return [];
+    }
+}
+
+module.exports = { connectToDb, getTables };

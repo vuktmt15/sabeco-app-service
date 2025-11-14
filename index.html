@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sabeco App Service - Database Tables</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: #333;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .loading {
+                text-align: center;
+                color: #666;
+                font-style: italic;
+            }
+
+            .error {
+                background-color: #f8d7da;
+                color: #721c24;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 20px 0;
+            }
+
+            .tables-list {
+                list-style: none;
+                padding: 0;
+            }
+
+            .table-item {
+                background-color: #f8f9fa;
+                margin: 10px 0;
+                padding: 15px;
+                border-left: 4px solid #007bff;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .table-item:hover {
+                background-color: #e9ecef;
+            }
+
+            .table-name {
+                font-weight: bold;
+                color: #007bff;
+                font-size: 16px;
+            }
+
+            .refresh-btn {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-top: 20px;
+            }
+
+            .refresh-btn:hover {
+                background-color: #0056b3;
+            }
+
+            .status {
+                text-align: center;
+                margin: 20px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Sabeco App Service - Database Tables</h1>
+
+            <div id="status" class="status">
+                <div class="loading">Đang tải danh sách bảng...</div>
+            </div>
+
+            <ul id="tablesList" class="tables-list"></ul>
+
+            <button id="refreshBtn" class="refresh-btn" onclick="loadTables()">
+                Làm mới
+            </button>
+        </div>
+
+        <script>
+            async function loadTables() {
+                const statusDiv = document.getElementById("status");
+                const tablesList = document.getElementById("tablesList");
+
+                statusDiv.innerHTML =
+                    '<div class="loading">Đang tải danh sách bảng...</div>';
+                tablesList.innerHTML = "";
+
+                try {
+                    const response = await fetch("/api/tables");
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || "Có lỗi xảy ra");
+                    }
+
+                    if (data.length === 0) {
+                        statusDiv.innerHTML =
+                            '<div class="error">Không tìm thấy bảng nào trong database.</div>';
+                        return;
+                    }
+
+                    statusDiv.innerHTML = `<div style="color: #28a745;">Tìm thấy ${data.length} bảng trong database.</div>`;
+
+                    data.forEach((table) => {
+                        const li = document.createElement("li");
+                        li.className = "table-item";
+                        li.innerHTML = `<div class="table-name">${table.name}</div>`;
+                        tablesList.appendChild(li);
+                    });
+                } catch (error) {
+                    statusDiv.innerHTML = `<div class="error">Lỗi: ${error.message}</div>`;
+                }
+            }
+
+            // Load tables when page loads
+            window.addEventListener("load", loadTables);
+        </script>
+    </body>
+</html>
