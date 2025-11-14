@@ -329,11 +329,21 @@
                 tablesList.innerHTML = "";
 
                 try {
+                    console.log("Fetching tables from API...");
                     const response = await fetch("/api/tables");
                     const data = await response.json();
 
+                    console.log("API Response:", {
+                        status: response.status,
+                        data,
+                    });
+
                     if (!response.ok) {
-                        throw new Error(data.error || "Có lỗi xảy ra");
+                        throw new Error(
+                            data.details
+                                ? `${data.error}: ${data.details}`
+                                : data.error || "Có lỗi xảy ra"
+                        );
                     }
 
                     if (data.length === 0) {
@@ -351,7 +361,8 @@
                         tablesList.appendChild(li);
                     });
                 } catch (error) {
-                    statusDiv.innerHTML = `<div class="error">Lỗi: ${error.message}</div>`;
+                    console.error("Error loading tables:", error);
+                    statusDiv.innerHTML = `<div class="error">Lỗi kết nối database: ${error.message}</div>`;
                 }
             }
 
@@ -366,16 +377,26 @@
                 tbody.innerHTML = "";
 
                 try {
+                    console.log("Fetching students from API...");
                     const response = await fetch("/api/students");
                     const data = await response.json();
 
+                    console.log("Students API Response:", {
+                        status: response.status,
+                        data,
+                    });
+
                     if (!response.ok) {
-                        throw new Error(data.error || "Có lỗi xảy ra");
+                        throw new Error(
+                            data.details
+                                ? `${data.error}: ${data.details}`
+                                : data.error || "Có lỗi xảy ra"
+                        );
                     }
 
                     if (data.length === 0) {
                         statusDiv.innerHTML =
-                            '<div class="error">Chưa có học sinh nào trong database.</div>';
+                            '<div style="color: #ffc107;">Chưa có học sinh nào trong database. Hãy thêm học sinh đầu tiên!</div>';
                         return;
                     }
 
@@ -386,14 +407,15 @@
                         const row = document.createElement("tr");
                         row.innerHTML = `
                             <td>${student.Id}</td>
-                            <td>${student.Name}</td>
-                            <td>${student.Age}</td>
-                            <td>${student.City}</td>
+                            <td>${student.Name || "N/A"}</td>
+                            <td>${student.Age || "N/A"}</td>
+                            <td>${student.City || "N/A"}</td>
                         `;
                         tbody.appendChild(row);
                     });
                 } catch (error) {
-                    statusDiv.innerHTML = `<div class="error">Lỗi: ${error.message}</div>`;
+                    console.error("Error loading students:", error);
+                    statusDiv.innerHTML = `<div class="error">Lỗi kết nối database: ${error.message}</div>`;
                 }
             }
 
@@ -408,6 +430,8 @@
                     city: formData.get("city"),
                 };
 
+                console.log("Submitting student data:", studentData);
+
                 try {
                     const response = await fetch("/api/students", {
                         method: "POST",
@@ -418,16 +442,25 @@
                     });
 
                     const result = await response.json();
+                    console.log("Add student response:", {
+                        status: response.status,
+                        result,
+                    });
 
                     if (!response.ok) {
-                        throw new Error(result.error || "Có lỗi xảy ra");
+                        throw new Error(
+                            result.details
+                                ? `${result.error}: ${result.details}`
+                                : result.error || "Có lỗi xảy ra"
+                        );
                     }
 
-                    alert("Thêm học sinh thành công!");
+                    alert(`Thêm học sinh thành công! ID: ${result.id}`);
                     form.reset();
                     loadStudents();
                 } catch (error) {
-                    alert("Lỗi: " + error.message);
+                    console.error("Error adding student:", error);
+                    alert("Lỗi thêm học sinh: " + error.message);
                 }
             }
 

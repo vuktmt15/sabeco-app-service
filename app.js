@@ -14,70 +14,105 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// Health check endpoint for Azure
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
 app.get("/api/tables", async (req, res) => {
     try {
+        console.log("API call: /api/tables");
         const connected = await connectToDb();
         if (!connected) {
-            return res
-                .status(500)
-                .json({ error: "Database connection failed" });
+            console.error("Database connection test failed");
+            return res.status(500).json({
+                error: "Database connection failed",
+                details:
+                    "Unable to establish connection to SQL Managed Instance",
+            });
         }
 
         const tables = await getTables();
+        console.log(`Returning ${tables.length} tables`);
         res.json(tables);
     } catch (err) {
-        console.error("Error:", err);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("API Error /api/tables:", err.message);
+        res.status(500).json({
+            error: "Internal server error",
+            details: err.message,
+        });
     }
 });
 
 app.get("/api/students", async (req, res) => {
     try {
+        console.log("API call: /api/students");
         const connected = await connectToDb();
         if (!connected) {
-            return res
-                .status(500)
-                .json({ error: "Database connection failed" });
+            console.error("Database connection test failed");
+            return res.status(500).json({
+                error: "Database connection failed",
+                details:
+                    "Unable to establish connection to SQL Managed Instance",
+            });
         }
 
         const students = await getStudents();
+        console.log(`Returning ${students.length} students`);
         res.json(students);
     } catch (err) {
-        console.error("Error:", err);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("API Error /api/students:", err.message);
+        res.status(500).json({
+            error: "Internal server error",
+            details: err.message,
+        });
     }
 });
 
 app.post("/api/students", async (req, res) => {
     try {
+        console.log("API call: POST /api/students", req.body);
         const { name, age, city } = req.body;
 
         if (!name || !age || !city) {
-            return res
-                .status(400)
-                .json({ error: "Vui lòng điền đầy đủ thông tin" });
+            console.log("Validation failed: missing required fields");
+            return res.status(400).json({
+                error: "Vui lòng điền đầy đủ thông tin",
+                details: "Name, age, and city are required",
+            });
         }
 
         const connected = await connectToDb();
         if (!connected) {
-            return res
-                .status(500)
-                .json({ error: "Database connection failed" });
+            console.error("Database connection test failed");
+            return res.status(500).json({
+                error: "Database connection failed",
+                details:
+                    "Unable to establish connection to SQL Managed Instance",
+            });
         }
 
         const result = await addStudent(name, parseInt(age), city);
         if (result.success) {
+            console.log(`Student added successfully with ID: ${result.id}`);
             res.json({
                 success: true,
                 message: "Thêm học sinh thành công",
                 id: result.id,
             });
         } else {
-            res.status(500).json({ error: result.error });
+            console.error("Failed to add student:", result.error);
+            res.status(500).json({
+                error: result.error,
+                details: "Database insert operation failed",
+            });
         }
     } catch (err) {
-        console.error("Error:", err);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("API Error POST /api/students:", err.message);
+        res.status(500).json({
+            error: "Internal server error",
+            details: err.message,
+        });
     }
 });
 
