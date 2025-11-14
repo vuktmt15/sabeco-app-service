@@ -1,6 +1,12 @@
 {
-  "dependencies": {
-    "express": "^5.1.0",
-    "mssql": "^12.1.0"
-  }
+    "name": "sabeco-app-service",
+    "version": "1.0.0",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express": "^5.1.0",
+        "mssql": "^12.1.0"
+    }
 }
