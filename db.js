@@ -1,10 +1,10 @@
 const sql = require("mssql");
 
 const config = {
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    server: process.env.SERVER,
-    database: process.env.DATABASE,
+    user: process.env.CUSTOMCONNSTR_USER,
+    password: process.env.CUSTOMCONNSTR_PASSWORD,
+    server: process.env.CUSTOMCONNSTR_SERVER,
+    database: process.env.CUSTOMCONNSTR_DATABASE,
     pool: {
         max: 10,
         min: 0,
