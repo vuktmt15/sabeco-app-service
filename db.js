@@ -1,10 +1,10 @@
 const sql = require("mssql");
 
 const config = {
-    user: "CloudSAe0a9edb9",
-    password: "Abc@123456789123456789",
-    server: "sqlmi-east.de303115d19d.database.windows.net",
-    database: "sabeco-lab-db",
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    server: process.env.SERVER,
+    database: process.env.DATABASE,
     pool: {
         max: 10,
         min: 0,
