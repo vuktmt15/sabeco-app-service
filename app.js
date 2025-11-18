@@ -19,6 +19,30 @@ app.get("/health", (req, res) => {
     res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
+// Environment variables check endpoint
+app.get("/api/config", (req, res) => {
+    try {
+        console.log("API call: /api/config");
+        const config = {
+            user: process.env.USER || "NOT SET",
+            password: process.env.PASSWORD ? "***HIDDEN***" : "NOT SET",
+            server: process.env.SERVER || "NOT SET",
+            database: process.env.DATABASE || "NOT SET",
+            port: process.env.PORT || "3000",
+            nodeEnv: process.env.NODE_ENV || "NOT SET",
+        };
+
+        console.log("Environment config:", config);
+        res.json(config);
+    } catch (err) {
+        console.error("API Error /api/config:", err.message);
+        res.status(500).json({
+            error: "Internal server error",
+            details: err.message,
+        });
+    }
+});
+
 app.get("/api/tables", async (req, res) => {
     try {
         console.log("API call: /api/tables");
