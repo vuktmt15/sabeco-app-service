@@ -21,6 +21,23 @@
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             }
 
+            .image-gallery {
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 24px;
+                flex-wrap: wrap;
+            }
+
+            .image-gallery img {
+                max-width: 30%;
+                height: auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                object-fit: cover;
+            }
+
             h1 {
                 color: #333;
                 text-align: center;
@@ -195,6 +212,11 @@
     <body>
         <div class="container">
             <h1>Sabeco App Service - Students Management</h1>
+            <div class="image-gallery">
+                <img src="Data/HHT06738.jpg" alt="Hình 1" />
+                <img src="Data/SND00907.jpg" alt="Hình 2" />
+                <img src="Data/SND00908.jpg" alt="Hình 3" />
+            </div>
 
             <div class="tabs">
                 <button class="tab active" onclick="showTab('tables')">
